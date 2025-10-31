@@ -6,8 +6,23 @@ const teamModel = require("../models/teamModel");
 // ✅ Xác thực token JWT
 // =====================================================
 exports.verifyToken = (req, res, next) => {
-  console.log("⚠️ Bỏ qua xác thực JWT tạm thời");
-  next();
+  console.log("🔹 Authorization Header:", req.headers.authorization);
+  const header = req.headers["authorization"];
+
+  if (!header) return res.status(401).json({ message: "No token provided" });
+
+  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
+  if (!token) return res.status(401).json({ message: "Token format invalid" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("✅ Decoded token:", decoded);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    console.error("❌ JWT verification failed:", err.message);
+    return res.status(403).json({ message: "Invalid or expired token" });
+  }
 };
 
 
@@ -70,4 +85,5 @@ exports.verifyLeader = async (req, res, next) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
