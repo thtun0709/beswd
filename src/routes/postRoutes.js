@@ -1,7 +1,7 @@
 // routes/postRoutes.js
 const express = require('express');
 const router = express.Router();
-const PostModel = require('../models/PostModel');
+const PostModel = require('../models/postModel');
 const CommentModel = require('../models/CommentModel');
 const { verifyToken, verifyAdmin } = require('../middlewares/authMiddleware');
 
@@ -530,3 +530,4 @@ router.delete('/:postId/comments/:commentId', verifyToken, async (req, res) => {
 });
 
 module.exports = router;
+
